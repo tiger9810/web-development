@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8
+    command:
+      - --collation-server=utf8mb4_0900_bin
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db
+      MYSQL_PASSWORD: password
+    ports:
+      - 53306:3306
+
+  backend:
+    build:
+      context: backend
+    tty: true
+    volumes:
+      - ./backend:/backend
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: frontend
+    tty: true
+    volumes:
+      - ./frontend:/frontend
+    ports:
+      - 3000:3000
+    environment:
+      - WATCHPACK_POLLING=true
